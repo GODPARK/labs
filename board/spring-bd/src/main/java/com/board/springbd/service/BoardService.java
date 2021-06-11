@@ -2,6 +2,7 @@ package com.board.springbd.service;
 
 import com.board.springbd.exception.BoardException;
 import com.board.springbd.model.Board;
+import com.board.springbd.model.Category;
 import com.board.springbd.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final CategoryService categoryService;
 
     public Board findBoardById(long seq) {
         return boardRepository.findByBoardSeqAndState(seq, true);
@@ -41,10 +43,12 @@ public class BoardService {
     }
 
     public Board saveBoard(Board board) {
+        Category category = categoryService.searchCategoryById(board.getCategoryId());
         if (board.getTitle().isBlank()) throw new BoardException("title is empty");
         Board saveBoard = Board.builder()
                 .title(board.getTitle())
                 .content(board.getContent())
+                .categoryId(category.getCategoryId())
                 .goodCount(0)
                 .createDate(new Date())
                 .state(true)

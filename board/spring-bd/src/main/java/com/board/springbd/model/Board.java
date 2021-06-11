@@ -19,6 +19,9 @@ public class Board {
     @Column(name="board_seq")
     private long boardSeq;
 
+    @Column(name = "category_id")
+    private long categoryId;
+
     @Column(name = "title", nullable = false)
     private String title;
 
@@ -39,4 +42,8 @@ public class Board {
 
     @Column(name = "delete_date")
     private Date deleteDate;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "category_id", insertable = false, updatable = false)
+    private Category category;
 }
