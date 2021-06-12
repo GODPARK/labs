@@ -9,7 +9,7 @@ import javax.persistence.*;
 @NoArgsConstructor @AllArgsConstructor
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
     private long categoryId;
 

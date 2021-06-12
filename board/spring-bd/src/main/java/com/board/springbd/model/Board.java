@@ -15,7 +15,7 @@ import java.util.Date;
 @ToString
 public class Board {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="board_seq")
     private long boardSeq;
 

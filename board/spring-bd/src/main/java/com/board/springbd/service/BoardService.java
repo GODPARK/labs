@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -43,8 +44,8 @@ public class BoardService {
     }
 
     public Board saveBoard(Board board) {
-        Category category = categoryService.searchCategoryById(board.getCategoryId());
         if (board.getTitle().isBlank()) throw new BoardException("title is empty");
+        Category category = categoryService.searchCategoryById(board.getCategoryId());
         Board saveBoard = Board.builder()
                 .title(board.getTitle())
                 .content(board.getContent())
@@ -54,6 +55,15 @@ public class BoardService {
                 .state(true)
                 .build();
         return boardRepository.save(saveBoard);
+    }
+
+    public Board editBoardCategory(long boardId, long categoryId) {
+        Board editBoard = boardRepository.findByBoardSeqAndState(boardId, true);
+        if (editBoard == null) throw new BoardException("board is empty");
+        Category category = categoryService.searchCategoryById(categoryId);
+        editBoard.setCategoryId(category.getCategoryId());
+        editBoard.setUpdateDate(new Date());
+        return boardRepository.save(editBoard);
     }
 
     public Board editBoard(long boardId, Board board) {

@@ -47,6 +47,14 @@ public class BoardController {
         return ResponseEntity.ok().body(boardService.editBoard(boardId, board));
     }
 
+    @PatchMapping(path = "/{boardId}/category/{categoryId}", produces = "application/json")
+    public ResponseEntity<Board> editBoardCategory (
+            @PathVariable(value = "boardId") long boardId,
+            @PathVariable(value = "categoryId") long categoryId
+    ) {
+        return ResponseEntity.ok().body(boardService.editBoardCategory(boardId, categoryId));
+    }
+
     @PatchMapping(path = "/{boardId}/good", produces = "application/json")
     public ResponseEntity<Board> addGoodCount (@PathVariable(value = "boardId", required = true) long boardId) {
         return ResponseEntity.ok().body(boardService.addGoodCount(boardId));
