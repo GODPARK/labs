@@ -6,6 +6,7 @@ import com.labs.login.component.Base64Encoding;
 import com.labs.login.db.Auth;
 import com.labs.login.db.User;
 import com.labs.login.dto.auth.LoginRequestDto;
+import com.labs.login.exception.BadRequestException;
 import com.labs.login.exception.NotFoundException;
 import com.labs.login.exception.UnAuthException;
 import com.labs.login.repository.AuthRepository;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.Optional;
@@ -81,6 +84,13 @@ public class AuthService {
         logger.info("save auth is success: " + saveAuth.toString());
     }
 
+    public void deleteAuth(UUID userId) {
+        Auth auth = this.authByUserId(userId);
+        auth.setStatus(stateValueComponent.getAuthExpire());
+        auth.setToken("");
+        this.authRepository.save(auth);
+    }
+
     public Auth login(LoginRequestDto loginRequestDto) {
         User user = this.userService.userByUserAccount(loginRequestDto.getAccount(), true);
         if (passwordEncoding.matches(loginRequestDto.getPassword(), user.getPassword())) {
@@ -107,6 +117,27 @@ public class AuthService {
         this.authRepository.save(auth);
         this.logger.info("logout is success : " + auth.getUserId().toString());
         return "logout is success";
+    }
+
+    public boolean tokenCheckInCookie(HttpServletRequest httpServletRequest) {
+        Cookie[] cookies = httpServletRequest.getCookies();
+        if (cookies != null) {
+            String userId = "";
+            String authToken = "";
+            for ( Cookie cookie : cookies) {
+                if (cookie.getName().equals("auth_token")) {
+                    authToken = cookie.getValue();
+                }
+                if (cookie.getName().equals("user_id")) {
+                    userId = cookie.getValue();
+                }
+            }
+            if (userId.isBlank() || authToken.isBlank()) throw new UnAuthException("cookie not have token or user id");
+            return this.tokenCheck(UUID.fromString(userId), authToken);
+        }
+        else {
+            throw new UnAuthException("no cookie");
+        }
     }
 
     public boolean tokenCheck(UUID userId, String authToken) {

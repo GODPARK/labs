@@ -44,6 +44,10 @@ public class User {
     private String password;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Column(name = "user_role", nullable = false)
+    private int userRole;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Column(name = "user_state", nullable = false)
     private int userState;
 

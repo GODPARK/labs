@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/api/user")
@@ -28,5 +31,19 @@ public class UserController {
     public ResponseEntity<User> signUpApi(@RequestBody @Valid User user) {
 
         return ResponseEntity.ok().body(userService.signUp(user));
+    }
+
+    @PostMapping(path = "/sign-out", consumes = "*/*", produces = "application/json")
+    public ResponseEntity<User> signOutApi(HttpServletRequest httpServletRequest) {
+        Cookie[] cookies = httpServletRequest.getCookies();
+        String userId = "";
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("user_id")) {
+                    userId = cookie.getValue();
+                }
+            }
+        }
+        return ResponseEntity.ok().body(this.userService.signOut(UUID.fromString(userId)));
     }
 }
