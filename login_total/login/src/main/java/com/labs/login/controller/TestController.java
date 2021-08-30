@@ -1,5 +1,6 @@
 package com.labs.login.controller;
 
+import com.labs.login.component.CookieComponent;
 import com.labs.login.component.StateValueComponent;
 import com.labs.login.exception.UnAuthException;
 import com.labs.login.service.UserService;
@@ -20,6 +21,9 @@ public class TestController {
     @Autowired
     private StateValueComponent stateValueComponent;
 
+    @Autowired
+    private CookieComponent cookieComponent;
+
     @GetMapping(path = "/token/valid", consumes = "*/*", produces = "*/*")
     public String tokenValidtest() {
         return "token check";
@@ -27,7 +31,10 @@ public class TestController {
 
     @GetMapping(path = "/role/user", consumes = "*/*", produces = "*/*")
     public String userRoleTest(HttpServletRequest httpServletRequest) {
-        if (this.userService.checkRoleUserIdInCookie(httpServletRequest, stateValueComponent.getUserRole())) {
+        if (this.userService.checkRoleUserId(
+                this.cookieComponent.userIdInCookie(httpServletRequest),
+                stateValueComponent.getUserRole())
+        ) {
             return "user role check";
         }
         throw new UnAuthException("user role un auth");
@@ -35,7 +42,10 @@ public class TestController {
 
     @GetMapping(path = "/role/admin", consumes = "*/*", produces = "*/*")
     public String adminRoleTest(HttpServletRequest httpServletRequest) {
-        if (this.userService.checkRoleUserIdInCookie(httpServletRequest, stateValueComponent.getAdminRole())) {
+        if (this.userService.checkRoleUserId(
+                this.cookieComponent.userIdInCookie(httpServletRequest),
+                stateValueComponent.getAdminRole())
+        ) {
             return "admin role check";
         }
         throw new UnAuthException("admin role un auth");
@@ -43,7 +53,10 @@ public class TestController {
 
     @GetMapping(path = "/role/super-admin", consumes = "*/*", produces = "*/*")
     public String sueprAdminRoleTest(HttpServletRequest httpServletRequest) {
-        if (this.userService.checkRoleUserIdInCookie(httpServletRequest, stateValueComponent.getSuperAdminRole())) {
+        if (this.userService.checkRoleUserId(
+                this.cookieComponent.userIdInCookie(httpServletRequest),
+                stateValueComponent.getSuperAdminRole())
+        ) {
             return "super admin role check";
         }
         throw new UnAuthException("super admin role un auth");

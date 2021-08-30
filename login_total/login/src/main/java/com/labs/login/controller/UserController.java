@@ -1,5 +1,6 @@
 package com.labs.login.controller;
 
+import com.labs.login.component.CookieComponent;
 import com.labs.login.db.User;
 import com.labs.login.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ import java.util.UUID;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CookieComponent cookieComponent;
 
     @GetMapping(path = "/uuid/{userId}", consumes = "*/*", produces = "application/json")
     public ResponseEntity<User> userByUserIdApi(@PathVariable(value = "userId") String userId) {
@@ -35,15 +39,10 @@ public class UserController {
 
     @PostMapping(path = "/sign-out", consumes = "*/*", produces = "application/json")
     public ResponseEntity<User> signOutApi(HttpServletRequest httpServletRequest) {
-        Cookie[] cookies = httpServletRequest.getCookies();
-        String userId = "";
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("user_id")) {
-                    userId = cookie.getValue();
-                }
-            }
-        }
-        return ResponseEntity.ok().body(this.userService.signOut(UUID.fromString(userId)));
+        return ResponseEntity.ok().body(
+                this.userService.signOut(
+                        this.cookieComponent.userIdInCookie(httpServletRequest)
+                )
+        );
     }
 }

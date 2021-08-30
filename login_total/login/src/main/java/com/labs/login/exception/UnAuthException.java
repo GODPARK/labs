@@ -10,6 +10,6 @@ public class UnAuthException extends RuntimeException{
     private final Logger logger = LoggerFactory.getLogger("[UNAUTH EXCEPTION]");
     public UnAuthException(String msg) {
         super(msg);
-        logger.error(msg);
+        logger.info(msg);
     }
 }

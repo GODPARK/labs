@@ -1,6 +1,7 @@
 package com.labs.login.config;
 
 import com.labs.login.component.AuthInterceptor;
+import com.labs.login.component.CookieComponent;
 import com.labs.login.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -11,10 +12,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class InterceptorConfig implements WebMvcConfigurer {
     @Autowired
     private AuthService authService;
+    @Autowired
+    private CookieComponent cookieComponent;
 
     @Override
     public void addInterceptors(InterceptorRegistry interceptorRegistry) {
-        interceptorRegistry.addInterceptor(new AuthInterceptor(authService))
+        interceptorRegistry.addInterceptor(new AuthInterceptor(authService, cookieComponent))
                 .addPathPatterns("/api/test/**")
                 .addPathPatterns("/api/auth/logout")
                 .addPathPatterns("/api/user/sign-out")

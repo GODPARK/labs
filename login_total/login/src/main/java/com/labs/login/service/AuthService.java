@@ -119,27 +119,6 @@ public class AuthService {
         return "logout is success";
     }
 
-    public boolean tokenCheckInCookie(HttpServletRequest httpServletRequest) {
-        Cookie[] cookies = httpServletRequest.getCookies();
-        if (cookies != null) {
-            String userId = "";
-            String authToken = "";
-            for ( Cookie cookie : cookies) {
-                if (cookie.getName().equals("auth_token")) {
-                    authToken = cookie.getValue();
-                }
-                if (cookie.getName().equals("user_id")) {
-                    userId = cookie.getValue();
-                }
-            }
-            if (userId.isBlank() || authToken.isBlank()) throw new UnAuthException("cookie not have token or user id");
-            return this.tokenCheck(UUID.fromString(userId), authToken);
-        }
-        else {
-            throw new UnAuthException("no cookie");
-        }
-    }
-
     public boolean tokenCheck(UUID userId, String authToken) {
         Auth auth = this.authByUserId(userId);
         if (!auth.getToken().equals(base64Encoding.decrypt(authToken))) throw new UnAuthException("token is not match: " + auth.getUserId().toString());

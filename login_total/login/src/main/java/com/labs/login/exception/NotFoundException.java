@@ -10,6 +10,6 @@ public class NotFoundException extends RuntimeException{
     private final Logger logger = LoggerFactory.getLogger("[NOT FOUND EXCEPTION]");
     public NotFoundException(String msg) {
         super(msg);
-        logger.error(msg);
+        logger.info(msg);
     }
 }

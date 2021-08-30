@@ -14,13 +14,18 @@ import java.util.UUID;
 public class AuthInterceptor implements HandlerInterceptor {
 
     private AuthService authService;
+    private CookieComponent cookieComponent;
 
-    public AuthInterceptor(AuthService authService) {
+    public AuthInterceptor(AuthService authService, CookieComponent cookieComponent) {
         this.authService = authService;
+        this.cookieComponent = cookieComponent;
     }
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) {
-        return this.authService.tokenCheckInCookie(httpServletRequest);
+        return this.authService.tokenCheck(
+                this.cookieComponent.userIdInCookie(httpServletRequest),
+                this.cookieComponent.authTokenInCookie(httpServletRequest)
+        );
     }
 }

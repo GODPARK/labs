@@ -10,6 +10,6 @@ public class BadRequestException extends RuntimeException{
     private final Logger logger = LoggerFactory.getLogger("[BAD REQUEST EXCEPTION]");
     public BadRequestException(String msg) {
         super (msg);
-        logger.error(msg);
+        logger.info(msg);
     }
 }

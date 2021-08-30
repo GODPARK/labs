@@ -87,21 +87,6 @@ public class UserService {
         return true;
     }
 
-    public boolean checkRoleUserIdInCookie(HttpServletRequest httpServletRequest, int role) {
-        Cookie[] cookies = httpServletRequest.getCookies();
-        if (cookies != null) {
-            String userId = "";
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("user_id")) {
-                    userId = cookie.getValue();
-                }
-            }
-            return this.checkRoleUserId(UUID.fromString(userId), role);
-        } else {
-            throw new BadRequestException("[user] cookie is null");
-        }
-    }
-
     public User signUp(User user) {
         logger.info("new user try sign in : " + user.getUserAccount());
         if (!user.getPassword().equals(user.getPasswordCheck())) throw new BadRequestException("password check is not match");

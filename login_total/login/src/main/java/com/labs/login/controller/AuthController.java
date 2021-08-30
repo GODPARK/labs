@@ -1,5 +1,6 @@
 package com.labs.login.controller;
 
+import com.labs.login.component.CookieComponent;
 import com.labs.login.db.Auth;
 import com.labs.login.dto.auth.LoginRequestDto;
 import com.labs.login.service.AuthService;
@@ -20,6 +21,9 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private CookieComponent cookieComponent;
+
     @PostMapping(path = "/login", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Auth> loginApi(@RequestBody LoginRequestDto loginRequestDto) {
         return ResponseEntity.ok().body(authService.login(loginRequestDto));
@@ -27,15 +31,8 @@ public class AuthController {
 
     @PostMapping(path = "/logout", consumes = "*/*", produces = "*/*")
     public ResponseEntity<String> logoutApi(HttpServletRequest httpServletRequest) {
-        Cookie[] cookies = httpServletRequest.getCookies();
-        String userId = "";
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("user_id")) {
-                    userId = cookie.getValue();
-                }
-            }
-        }
-        return ResponseEntity.ok().body(this.authService.logout(UUID.fromString(userId)));
+        return ResponseEntity.ok().body(
+                this.authService.logout(this.cookieComponent.userIdInCookie(httpServletRequest))
+        );
     }
 }
